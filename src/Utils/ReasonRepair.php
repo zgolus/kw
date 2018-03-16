@@ -37,7 +37,7 @@ class ReasonRepair
                 $reason = substr_replace($reason, '', $codePosition, $codeLength);
             }
         }
-        
+
         return $this->implodeCodes($validatedCodes);
     }
 

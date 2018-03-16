@@ -9,6 +9,7 @@
 namespace App\Command;
 
 use Symfony\Component\Console\Command\Command;
+use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use App\Utils\ReasonRepair;
@@ -29,26 +30,28 @@ Class Write extends Command
 
     protected function configure()
     {
-        $this->setName('kw:retoure:write');
+        $this->setName('kw:retoure:write')
+            ->addArgument('input', InputArgument::REQUIRED, 'Input file')
+            ->addArgument('output', InputArgument::REQUIRED, 'Output file');
     }
 
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $handle = fopen('corrupt_reasons.csv', "r");
-        $new = fopen('corrected_reasons.csv', 'w');
-        if ($handle) {
-            while (($line = fgets($handle)) !== false) {
+        $inputHandle = fopen($input->getArgument('input'), "r");
+        $outputHandle = fopen($input->getArgument('output'), 'w');
+        if ($inputHandle) {
+            while (($line = fgets($inputHandle)) !== false) {
                 $line = trim($line);
-                list($retourId, $retourReason) = explode(',', $line, 2);
-                $originalReason = trim($retourReason);
+                list($retourId, $retoureReason) = explode(',', $line, 2);
+                $originalReason = trim($retoureReason);
 
                 $repairedReason = $this->reasonRepair->repair($originalReason);
-                fwrite($new, sprintf("%s,%s\n", $retourId, $repairedReason));
+                fwrite($outputHandle, sprintf("%s,%s\n", $retourId, $repairedReason));
 
             }
-            fclose($handle);
+            fclose($inputHandle);
         }
-        fclose($new);
+        fclose($outputHandle);
         $output->writeln('Done.');
     }
 }

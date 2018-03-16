@@ -8,11 +8,12 @@
 
 namespace App\Command;
 
-use Symfony\Component\Console\Command\Command;
-use Symfony\Component\Console\Input\InputInterface;
-use Symfony\Component\Console\Output\OutputInterface;
 use App\Utils\ReasonRepair;
 use App\Utils\ReasonValidator;
+use Symfony\Component\Console\Command\Command;
+use Symfony\Component\Console\Input\InputArgument;
+use Symfony\Component\Console\Input\InputInterface;
+use Symfony\Component\Console\Output\OutputInterface;
 
 Class Load extends Command
 {
@@ -29,13 +30,14 @@ Class Load extends Command
 
     protected function configure()
     {
-        $this->setName('kw:retoure:load');
+        $this->setName('kw:retoure:load')
+             ->addArgument('input', InputArgument::REQUIRED, 'Input file');
     }
 
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         $firstLineSkipped = false;
-        $handle = fopen("corrupt_reasons.csv", "r");
+        $handle = fopen($input->getArgument('input'), "r");
         if ($handle) {
             while (($line = fgets($handle)) !== false) {
                 if (!$firstLineSkipped) {
