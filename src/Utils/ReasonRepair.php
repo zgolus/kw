@@ -37,6 +37,7 @@ class ReasonRepair
                 $reason = substr_replace($reason, '', $codePosition, $codeLength);
             }
         }
+        
         return $this->implodeCodes($validatedCodes);
     }
 
@@ -47,7 +48,7 @@ class ReasonRepair
 
     private function implodeCodes(array $codes)
     {
-        sort($codes);
+        ksort($codes);
 
         return implode(',', $codes);
     }
